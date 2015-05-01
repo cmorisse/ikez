@@ -132,7 +132,7 @@ def main():
     odoo_install_parser.add_argument('--force-appserver-cfg',
                                       action='store_true',
                                       default=False,
-                                      help="Fore appserver.cfg to be regenerated.")
+                                      help="Force appserver.cfg to be regenerated.")
     odoo_install_parser.add_argument('--unattended',
                                      action='store_true',
                                      default=False,
@@ -155,9 +155,16 @@ def main():
                                      action='store_true',
                                      default=False,
                                      help="Do not install pip in the appserver virtualenv")
+    odoo_install_parser.add_argument('--no-bzr',
+                                     action='store_true',
+                                     default=False,
+                                     help="By default, ikez installs bzr in the virtualenv,"
+                                          " use this if you don't need it (install requires pip)")
+
 
     odoo_reset_parser = odoo_subparsers.add_parser("reset",
-                                                   help="Reset Odoo installation by removing all buildout generated files.")
+                                                   help="Reset Odoo installation by removing all "
+                                                        "buildout generated files.")
 
     odoo_bootstrap_buildout_parser = odoo_subparsers.add_parser("bootstrap-buildout",
                                                                 help="Create a virtualenv and bootstrap a buildout")
@@ -168,7 +175,7 @@ def main():
     odoo_bootstrap_buildout_parser.add_argument('--force-appserver-cfg',
                                                 action='store_true',
                                                 default=False,
-                                                help="Fore appserver.cfg to be regenerated.")
+                                                help="Force appserver.cfg to be regenerated.")
     odoo_bootstrap_buildout_parser.add_argument('--index', '-i',
                                                 action='store',
                                                 default='',
@@ -177,6 +184,11 @@ def main():
                                                 action='store_true',
                                                 default=False,
                                                 help="Do not install pip in the appserver virtualenv")
+    odoo_bootstrap_buildout_parser.add_argument('--no-bzr',
+                                                action='store_true',
+                                                default=False,
+                                                help="By default, ikez installs bzr in the virtualenv,"
+                                                     " use this if you don't need it (install requires pip)")
 
     odoo_bootstrap_buildout_parser.add_argument('--username', '-u',
                                                 action='store',

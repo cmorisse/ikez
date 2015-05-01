@@ -91,7 +91,7 @@ def generate_buildout_cfg(args, indent=0):
         buildout_cfg.close()
         echo("Done", indent=0, color=Fore.GREEN)
     else:
-        echo("Existing buildout.cfg untouched. Use --force to regenerate it.", indent+1, Fore.CYAN)
+        echo("Existing buildout.cfg untouched. Use --force to regenerate it.", indent, Fore.CYAN)
 
     return 0
 
@@ -120,7 +120,7 @@ def generate_appserver_cfg(args, indent=0):
         appserver_cfg.close()
         echo("Done", indent=0, color=Fore.GREEN)
     else:
-        echo("Existing appserver.cfg untouched. Use --force-appserver-cfg to regenerate it.", indent+1, Fore.CYAN)
+        echo("Existing appserver.cfg untouched. Use --force-appserver-cfg to regenerate it.", indent, Fore.CYAN)
     return 0
 
 
@@ -129,11 +129,13 @@ def assert_buildout_cfg_files(args, indent=0):
     Check every required buildout cfg files exists and
     create missing ones
     """
-    exit_code = generate_appserver_cfg(args, indent)
+    echo("Checking buildout.cfg files", indent=indent)
+    exit_code = generate_appserver_cfg(args, indent=indent+1)
     if exit_code:
         return exit_code
 
-    return generate_buildout_cfg(args, indent)
+    exit_code = generate_buildout_cfg(args, indent=indent+1)
+    return exit_code
 
 
 def bootstrap_buildout(args, indent=0):
@@ -198,6 +200,12 @@ def bootstrap_buildout(args, indent=0):
         exit_code = pretty_execute("Deleting files",
                                    ['rm', 'get-pip.py'],
                                    args, indent=indent+1)
+        if not args.no_bzr:
+            exit_code = pretty_execute("Installing bzr 2.6 (use --no-bzr to prevent)",
+                                       ['py27/bin/pip', 'install', 'bzr==2.6'],
+                                       args, indent=indent+1)
+            if exit_code:
+                return exit_code
 
     return exit_code
 
@@ -300,9 +308,10 @@ def install(args):
         if exit_code:
             return exit_code
 
-    exit_code = assert_buildout_cfg_files(args, indent=1)
-    if exit_code:
-        return exit_code
+    #integrated in bootstrap_bildout        
+    #exit_code = assert_buildout_cfg_files(args, indent=1)
+    #if exit_code:
+    #    return exit_code
 
     if not os.path.exists('bin/buildout'):
         exit_code = bootstrap_buildout(args, indent=1)
