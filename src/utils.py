@@ -82,7 +82,7 @@ def pretty_execute(message, command, args, capture_output=True, indent=0, return
             return (e.returncode, e.output,) if return_output else e.returncode
         except OSError as e:
             if e.errno == 2:
-                print("FAILED")
+                print(Fore.RED + "FAILED" + Fore.RESET)
                 print("%sERROR: '%s' command cannot be found." % (indent_text, command[0],))
                 return (1, e.output,) if return_output else 1
             raise e
