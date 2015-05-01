@@ -15,7 +15,7 @@ import system_info
 PROG = "ikez"
 DESCRIPTION = "A tool to automate Odoo server development."
 EPILOG = "Copyright (c) 2013, 2014, 2015 Cyril MORISSE / @cmorisse\nikez is licenced under GPL3"
-VERSION = '0.1.4'
+VERSION = '0.1.5'
 #
 # Main entry point
 #
