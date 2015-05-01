@@ -20,8 +20,8 @@ def is_sudo():
 
 def install_packages_debian(package_list, args=None, indent=0):
 
-    if args.no_check_packages:
-        #TODO: Add a comment
+    if args.no_packages_check:
+        echo("System packages and dependencies update skipped.", indent=indent, color=Fore.CYAN)
         return 0
 
     # update apt-get index
@@ -102,6 +102,19 @@ PACKAGES_ubuntu = [
     'bzr', 'mercurial', 'git', 'vim', 'curl', 'htop', 'gettext',
     ]
 
+PACKAGES_ubuntu_15 = [
+    'python-dev',
+    'zlib1g-dev',
+    'libpq-dev',
+    'libxml2-dev', 'libxslt1-dev',
+    'libyaml-dev',
+    'libldap2-dev', 'libsasl2-dev',
+    'libopenjpeg-dev', 'libjpeg-dev',
+    'libfreetype6-dev', 'liblcms2-dev', 'libwebp-dev', 'libtiff5-dev',
+    'bzr', 'mercurial', 'git', 'vim', 'curl', 'htop', 'gettext',
+    ]
+
+
 PACKAGES_debian_7 = [
     'python-dev',
     'zlib1g-dev',
@@ -143,6 +156,7 @@ def refresh_system_packages_index_debian(args, indent=0):
 MAP_UBUNTU_VERSION_TO_PACKAGE_NAME = {
     '12.04': 'wkhtmltox-0.12.1_linux-precise-amd64.deb',
     '14.04': 'wkhtmltox-0.12.1_linux-trusty-amd64.deb',
+    '15.04': 'wkhtmltox-0.12.1_linux-trusty-amd64.deb',
 }
 MAP_DEBIAN_VERSION_TO_PACKAGE_NAME = {
     '7':   'wkhtmltox-0.12.1_linux-wheezy-amd64.deb',
@@ -234,7 +248,10 @@ def install_system_dependencies_ubuntu(args, indent=0):
             exit_code = install_packages_debian(PACKAGES_debian_8, args, indent=indent)
 
     else:  # Ubuntu
-        exit_code = install_packages_debian(PACKAGES_ubuntu, args, indent=indent)
+        if System.system_major_version == '15':
+            exit_code = install_packages_debian(PACKAGES_ubuntu_15, args, indent=indent)
+        else:
+            exit_code = install_packages_debian(PACKAGES_ubuntu, args, indent=indent)
 
     if exit_code:
         return exit_code
@@ -452,16 +469,16 @@ def install_virtualenv(args, indent=0):
 
                 return install_virtualenv_from_pypi(args, indent=indent+1)
 
-            elif System.system_major_version == '14':
-                echo("On Trusty (Ubuntu 14), default virtualenv version is ok so we just apt-get it.",
+            elif System.system_major_version in ('14', '15',):
+                echo("On Ubuntu 14 and 15, default virtualenv version is ok so we just apt-get it.",
                      indent=indent+1, color=Fore.CYAN)
                 exit_code = pretty_execute("Installing Ubuntu distribution virtualenv",
                                            ['sudo', 'apt-get', 'install', '-y', 'python-virtualenv'],
                                            args, indent=indent+1)
                 return exit_code
             else:
-                echo("You are running ikez on an unsupported Ubuntu version ! ikez supports only"
-                     "precise and trusty for now.", color=Fore.RED)
+                echo("You are running ikez on an unsupported Ubuntu version ! ikez supports only "
+                     "Ubuntu 14 and 15 for now.", color=Fore.RED)
                 raise NotImplementedError()
 
         elif System.system_name == 'darwin':
