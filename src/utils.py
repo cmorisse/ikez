@@ -34,7 +34,7 @@ def execute(command, capture_output=False):
 INDENT_STEP = '    '
 DRYRUN_TEMPLATE = Fore.RED+"Dryrun ===> "+Fore.RESET
 
-def pretty_execute(message, command, args, capture_output=True, indent=0, return_output=False, env=None):
+def pretty_execute(message, command, args, capture_output=True, indent=0, return_output=False, env=None, **kwargs):
     """
 
     :param message: message to display to user
@@ -72,7 +72,7 @@ def pretty_execute(message, command, args, capture_output=True, indent=0, return
         sys.stdout.flush()  # TODO: Make it run when redirecting output
         try:
             if not args.dryrun:
-                output = subprocess.check_output(command, stderr=subprocess.STDOUT, env=env)
+                output = subprocess.check_output(command, stderr=subprocess.STDOUT, env=env, **kwargs)
         except subprocess.CalledProcessError as e:
             print(Fore.RED + "FAILED"+ Fore.RESET)
             if not return_output:

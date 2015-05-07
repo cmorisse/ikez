@@ -6,18 +6,21 @@ from system_info import System
 import subprocess
 import system
 from utils import echo, pretty_execute
-
+import tempfile
 
 def exec_psql_command(msg, sql_command, database='postgres', sudo=False, args=None, indent=0, env=None):
 
     if System.system_name in ( 'debian', 'ubuntu',):
         command = [ 'sudo', 'su', 'postgres', '-c',
-            'psql %s -tAc "%s"' % (database, sql_command)
+            'psql %s -tAc \"%s\"' % (database, sql_command)
         ]
     elif System.system_name == 'darwin':
         command = ['psql', database, '-tAc', sql_command]
 
-    exit_code, output = pretty_execute(msg, command, args, indent=indent, return_output=True, env=env)
+    # When invoked by root from a root only access directory, postgres user is not allowed
+    # to cd in a root owned directory. So we change cwd to tempfile.gettempdir()
+    exit_code, output = pretty_execute(msg, command, args, indent=indent, return_output=True, env=env,
+                                       cwd=tempfile.gettempdir())
     return exit_code, output
 
 def exec_psql_user_command(msg, username, password, sql_command, host='localhost', database='postgres', args=None, indent=0):
