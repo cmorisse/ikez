@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='ikez',
-    version='0.1.5',
+    version='0.1.6',
     py_modules=['ikez'],
     install_requires=[
         'colorama==0.3.3',
